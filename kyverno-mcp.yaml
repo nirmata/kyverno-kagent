@@ -1,0 +1,75 @@
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: kyverno-mcp
+  namespace: kagent
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kyverno-mcp-access
+rules:
+  - apiGroups: ["*"]
+    resources: ["*"]
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: kyverno-mcp-access
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: kyverno-mcp-access
+subjects:
+  - kind: ServiceAccount
+    name: kyverno-mcp
+    namespace: kagent
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kyverno-mcp
+  namespace: kagent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kyverno-mcp
+  template:
+    metadata:
+      labels:
+        app: kyverno-mcp
+    spec:
+      serviceAccountName: kyverno-mcp
+      containers:
+        - name: kyverno-mcp
+          image: ghcr.io/nirmata/kyverno-mcp:v0.2.2
+          imagePullPolicy: IfNotPresent
+          args:
+            - --http-addr=:8080
+          ports:
+            - containerPort: 8080
+          env:
+            - name: KUBECONFIG
+              value: /kube/config
+          volumeMounts:
+            - name: kubeconfig-volume
+              mountPath: /kube
+              readOnly: true
+      volumes:
+        - name: kubeconfig-volume
+          secret:
+            secretName: kyverno-mcp-kubeconfig
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kyverno-mcp
+  namespace: kagent
+spec:
+  selector:
+    app: kyverno-mcp
+  ports:
+    - port: 80
+      targetPort: 8080

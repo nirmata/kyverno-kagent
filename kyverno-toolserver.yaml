@@ -1,0 +1,10 @@
+apiVersion: kagent.dev/v1alpha1
+kind: ToolServer
+metadata:
+  name: kyverno-toolserver
+  namespace: kagent
+spec:
+  description: Kyverno MCP tools for policy scanning
+  config:
+    streamableHttp:
+      url: http://kyverno-mcp.kagent.svc.cluster.local/mcp
