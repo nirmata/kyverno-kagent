@@ -28,12 +28,14 @@ Follow quick-start instructions found here [[quickstart](https://kagent.dev/docs
 
 ---
 
-### 3. Add the Kyverno Agent
+### 3. Add the Kyverno Agent and MCP Configuration
 
 Apply the Kyverno agent custom resource:
 
 ```bash
 kubectl apply -f kyverno-agent.yaml
+kubectl apply -f kyverno-toolserver.yaml
+kubectl apply -f kyverno-mcp.yaml
 ```
 
 > The kagent UI configuration can be used instead of applying the yaml for simplicity
@@ -47,12 +49,16 @@ kubectl apply -f kyverno-agent.yaml
 - “Write a cleanup policy for Jobs older than 14 days.”
 - “Only allow signed images from ghcr.io using cosign.”
 - "Deploy a policy that mandates team label"
+- "Show violations"
+- "apply default policy sets for default namespace"
 
 ---
 
 ## Structure
 
 - `kyverno-agent.yaml` – Kagent Agent definition with full instructions
+- `kyverno-toolserver.yaml` - Tool definition file for Kagent
+- `kyverno-mcp.yaml` - Kyverno MCP configuration
 - `instructions` – Sample Agent Instructions
 - `README.md` – This file
 ---
