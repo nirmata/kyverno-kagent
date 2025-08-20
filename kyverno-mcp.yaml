@@ -50,17 +50,6 @@ spec:
             - --http-addr=:8080
           ports:
             - containerPort: 8080
-          env:
-            - name: KUBECONFIG
-              value: /kube/config
-          volumeMounts:
-            - name: kubeconfig-volume
-              mountPath: /kube
-              readOnly: true
-      volumes:
-        - name: kubeconfig-volume
-          secret:
-            secretName: kyverno-mcp-kubeconfig
 ---
 apiVersion: v1
 kind: Service
